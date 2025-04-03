@@ -20,6 +20,8 @@ wheels/
 .installed.cfg
 *.egg
 
+/service_account.json 
+
 # Virtual Environment
 venv/
 env/
@@ -77,3 +79,4 @@ wheels/
 
 # Local development settings
 local_settings.py
+

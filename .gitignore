@@ -80,3 +80,4 @@ wheels/
 # Local development settings
 local_settings.py
 
+/poetry.lock

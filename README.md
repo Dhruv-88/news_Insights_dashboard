@@ -87,25 +87,25 @@ This project involves building a Live Business Intelligence (BI) Dashboard using
 
 ## Task List
 1. **Requirement Gathering and Planning**
-    - 👨‍💻 Define types of news data to collect (e.g., technology, business, health, etc.).
-    - 👨‍💻 Identify key metrics for visualization (e.g., news frequency, sentiment).
+    - ✅ Define types of news data to collect (e.g., technology, business, health, etc.).
+    - ✅ Identify key metrics for visualization (e.g., news frequency, sentiment).
     - 👨‍💻 Set schedule for data extraction (every 6 hours).
-    - 👨‍💻 Choose sentiment analysis model (e.g., DistilBERT, VADER).
+    - ✅ Choose sentiment analysis model (e.g., DistilBERT, VADER).
 
 2. **Set Up the Environment**
-    - 👨‍💻 Set up Google Cloud Platform (GCP) project.
+    - ✅ Set up Google Cloud Platform (GCP) project.
     - 👨‍💻 Enable Google Cloud Composer and configure environment.
     - 👨‍💻 Set up Looker Studio and connect to Google BigQuery.
-    - 👨‍💻 Set up NLP sentiment analysis model (DistilBERT or VADER) via Google Cloud AI or Google Cloud Functions.
+    - ✅ Set up NLP sentiment analysis model (DistilBERT or VADER) via Google Cloud AI or Google Cloud Functions.
 
 3. **ETL Pipeline Development**
     - **Extract**:
-        - 👨‍💻 Set up API call to News API to fetch real-time news data.
-        - 👨‍💻 Define filters for data (e.g., keywords, locations, languages).
+        - ✅ Set up API call to News API to fetch real-time news data.
+        - ✅ Define filters for data (e.g., keywords, locations, languages).
     - **Transform**:
-        - 👨‍💻 Write Python scripts in Apache Airflow to clean and structure data.
-        - 👨‍💻 Integrate sentiment analysis to classify articles as positive, negative, or neutral.
-        - 👨‍💻 Extract key fields: article title, date, content, category, and sentiment.
+        - ✅ Write Python scripts in Apache Airflow to clean and structure data.
+        - ✅ Integrate sentiment analysis to classify articles as positive, negative, or neutral.
+        - ✅ Extract key fields: article title, date, content, category, and sentiment.
     - **Load**:
         - 👨‍💻 Load data into Google BigQuery for querying and analysis.
 

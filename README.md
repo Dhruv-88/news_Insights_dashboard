@@ -95,7 +95,7 @@ This project involves building a Live Business Intelligence (BI) Dashboard using
 2. **Set Up the Environment**
     - ✅ Set up Google Cloud Platform (GCP) project.
     - 👨‍💻 Enable Google Cloud Composer and configure environment.
-    - 👨‍💻 Set up Looker Studio and connect to Google BigQuery.
+    - ✅ Set up Looker Studio and connect to Google BigQuery.
     - ✅ Set up NLP sentiment analysis model (DistilBERT or VADER) via Google Cloud AI or Google Cloud Functions.
 
 3. **ETL Pipeline Development**
@@ -107,7 +107,7 @@ This project involves building a Live Business Intelligence (BI) Dashboard using
         - ✅ Integrate sentiment analysis to classify articles as positive, negative, or neutral.
         - ✅ Extract key fields: article title, date, content, category, and sentiment.
     - **Load**:
-        - 👨‍💻 Load data into Google BigQuery for querying and analysis.
+        - ✅ Load data into Google BigQuery for querying and analysis.
 
 4. **Apache Airflow Setup**
     - 👨‍💻 Set up Apache Airflow in Google Cloud Composer.
@@ -119,14 +119,14 @@ This project involves building a Live Business Intelligence (BI) Dashboard using
         - Data loading into Google BigQuery.
 
 5. **Data Visualization with Looker Studio**
-    - 👨‍💻 Connect Looker Studio to Google BigQuery.
-    - 👨‍💻 Create visualizations for:
+    - ✅ Connect Looker Studio to Google BigQuery.
+    - ✅ Create visualizations for:
         - News frequency over time.
         - Popular news categories/topics.
         - Geographical distribution of news stories.
         - Sentiment distribution (positive, negative, neutral).
         - Sentiment trends over time.
-    - 👨‍💻 Design interactive dashboards for data exploration.
+    - ✅ Design interactive dashboards for data exploration.
 
 6. **Testing and Validation**
     - 👨‍💻 Unit test ETL pipeline to verify data extraction, transformation, and loading.

@@ -20,7 +20,9 @@ from newsapi import NewsApiClient
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from transformers import pipeline
-
+from google.cloud import bigquery
+from google.oauth2 import service_account
+from dotenv import load_dotenv
 
 # Configure logging
 logging.basicConfig(
@@ -340,22 +342,58 @@ def analyze_sentiment(df: pd.DataFrame, text_column: str = 'full_content') -> pd
     return df
 
 
-def save_data(df: pd.DataFrame, filename: str = 'transformed_news_data.csv') -> None:
+def load_data_to_bigquery(dataframe, service_account_path='./service_account.json', method='replace'):
     """
-    Save the DataFrame to a CSV file.
+    Load a pandas DataFrame to BigQuery.
     
-    Args:
-        df: DataFrame to save
-        filename: Name of the output file
+    Parameters:
+    -----------
+    dataframe : pandas.DataFrame
+        The DataFrame to be loaded to BigQuery
+    service_account_path : str, default='./service_account.json'
+        Path to the Google Cloud service account JSON file
+    method : str, default='replace'
+        What to do if the table exists. Options: 'fail', 'replace', or 'append'
         
     Returns:
-        None
+    --------
+    int
+        Number of rows loaded to BigQuery
     """
+    # Load environment variables
+    load_dotenv()
+    
+    # Get BigQuery project, dataset, and table details from environment variables
+    project_id = os.getenv("project_id")
+    dataset_id = os.getenv("dataset_id")
+    table_id = os.getenv("table_id")
+    
+    if not all([project_id, dataset_id, table_id]):
+        raise ValueError("Missing environment variables. Make sure project_id, dataset_id, and table_id are set.")
+    
+    # Full table reference
+    table_ref = f"{dataset_id}.{table_id}"
+    
+    # Set up credentials
+    credentials = service_account.Credentials.from_service_account_file(service_account_path)
+    
+    # Check if publishedAt is in datetime format
+    if 'publishedAt' in dataframe.columns and dataframe['publishedAt'].dtype == 'object':
+        dataframe['publishedAt'] = pd.to_datetime(dataframe['publishedAt'])
+    
+    # Upload to BigQuery with error handling
     try:
-        df.to_csv(filename, index=False, encoding='utf-8')
-        logger.info(f"Data successfully saved to {filename}")
+        dataframe.to_gbq(
+            destination_table=table_ref,
+            project_id=project_id,
+            if_exists=method,
+            credentials=credentials
+        )
+        print(f"Successfully loaded {len(dataframe)} rows to {table_ref}")
+        return len(dataframe)
     except Exception as e:
-        logger.error(f"Error saving data to {filename}: {str(e)}")
+        print(f"Error loading data to BigQuery: {str(e)}")
+        raise
 
 
 def main() -> Optional[pd.DataFrame]:
@@ -397,7 +435,8 @@ def main() -> Optional[pd.DataFrame]:
         print(source_sentiment)
         
         # Save to CSV
-        save_data(results_df, 'news_with_sentiment.csv')
+        load_data_to_bigquery(results_df,method='append')
+
         logger.info("Pipeline completed successfully!")
         
         return results_df

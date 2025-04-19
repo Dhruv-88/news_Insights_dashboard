@@ -1,31 +1,28 @@
+# Import components
+
 """
-News Data Pipeline - Main Orchestration Script
+    News Data Pipeline - Main Orchestration Script
 
-This script coordinates the entire ETL pipeline for news data:
-1. Extract data from NewsAPI
-2. Transform and process the data
-3. Analyze sentiment of news content
-4. Load data to BigQuery
+    This script coordinates the entire ETL pipeline for news data:
+    1. Extract data from NewsAPI
+    2. Transform and process the data
+    3. Analyze sentiment of news content
+    4. Load data to BigQuery
 
-Usage:
-    python main.py
+    Usage:
+        python main.py
 """
 
-import os
-import logging
-import argparse
-from dotenv import load_dotenv
 
 try:
     # If main.py is in the root directory
     from components.extract_content import extract_data
     from components.transform_content import transform_data
-    from components.analyse_sentiment import analyze_sentiment
-    from components.load_content import load_data_to_bigquery
+    from components.sentiment_analysis import analyze_sentiment
+    from components.load_data import load_data_to_bigquery
 except ImportError:
     # If main.py is somewhere else
     import sys
-    import os
     # Get the absolute path to the project root directory
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     sys.path.append(project_root)
@@ -33,8 +30,24 @@ except ImportError:
     # Try again with the updated path
     from components.extract_content import extract_data
     from components.transform_content import transform_data
-    from components.analyse_sentiment import analyze_sentiment
-    from components.load_content import load_data_to_bigquery
+    from components.sentiment_analysis import analyze_sentiment
+    from components.load_data import load_data_to_bigquery
+
+
+
+import os
+import logging
+import argparse
+from dotenv import load_dotenv
+import pandas as pd 
+import os
+import argparse
+from dotenv import load_dotenv
+
+# Set up logging first
+from components.logging_config import setup_logging, get_logger
+setup_logging()  # Initialize logging system
+logger = get_logger(__name__)
 
 # Configure logging
 logging.basicConfig(

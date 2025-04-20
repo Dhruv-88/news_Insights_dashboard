@@ -24,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def load_data_to_bigquery(dataframe, service_account_path='./service_account.json', method='replace'):
+def load_data_to_bigquery(dataframe, service_account_path='./service_account.json', method='append'):
     """
     Load a pandas DataFrame to BigQuery.
     

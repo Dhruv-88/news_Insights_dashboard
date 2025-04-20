@@ -13,28 +13,6 @@
         python main.py
 """
 
-
-try:
-    # If main.py is in the root directory
-    from components.extract_content import extract_data
-    from components.transform_content import transform_data
-    from components.sentiment_analysis import analyze_sentiment
-    from components.load_data import load_data_to_bigquery
-except ImportError:
-    # If main.py is somewhere else
-    import sys
-    # Get the absolute path to the project root directory
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    sys.path.append(project_root)
-    
-    # Try again with the updated path
-    from components.extract_content import extract_data
-    from components.transform_content import transform_data
-    from components.sentiment_analysis import analyze_sentiment
-    from components.load_data import load_data_to_bigquery
-
-
-
 import os
 import logging
 import argparse
@@ -43,9 +21,36 @@ import pandas as pd
 import os
 import argparse
 from dotenv import load_dotenv
-
+from newsapi import NewsApiClient
 # Set up logging first
-from components.logging_config import setup_logging, get_logger
+
+
+
+try:
+    # If main.py is in the root directory
+    from components.extract_content import extract_data
+    from components.transform_content import transform_data
+    from components.analyse_sentiment import analyze_sentiment
+    from components.load_content import load_data_to_bigquery
+    from components.logging_config import setup_logging, get_logger
+except ImportError:
+    # If main.py is somewhere else
+    import sys
+    import os
+    # Get the absolute path to the project root directory
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.append(project_root)
+    
+    # Try again with the updated path
+    from components.extract_content import extract_data
+    from components.transform_content import transform_data
+    from components.analyse_sentiment import analyze_sentiment
+    from components.load_content import load_data_to_bigquery
+    from components.logging_config import setup_logging, get_logger
+
+
+
+
 setup_logging()  # Initialize logging system
 logger = get_logger(__name__)
 
@@ -69,7 +74,7 @@ def main():
     parser = argparse.ArgumentParser(description="News Data Pipeline")
     parser.add_argument('--service_account', type=str, default='./service_account.json',
                         help='Path to Google Cloud service account JSON file')
-    parser.add_argument('--load_method', type=str, default='replace', choices=['fail', 'replace', 'append'],
+    parser.add_argument('--load_method', type=str, default='append', choices=['fail', 'replace', 'append'],
                         help='Method to use when loading data to BigQuery')
     args = parser.parse_args()
     

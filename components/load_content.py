@@ -13,18 +13,9 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("news_pipeline.log"),
-        logging.StreamHandler()
-    ]
-)
 logger = logging.getLogger(__name__)
 
-
-def load_data_to_bigquery(dataframe, service_account_path='./service_account.json', method='append'):
+def load_data_to_bigquery(dataframe, service_account_path=None, method='append'):
     """
     Load a pandas DataFrame to BigQuery.
     
@@ -32,9 +23,9 @@ def load_data_to_bigquery(dataframe, service_account_path='./service_account.jso
     -----------
     dataframe : pandas.DataFrame
         The DataFrame to be loaded to BigQuery
-    service_account_path : str, default='./service_account.json'
-        Path to the Google Cloud service account JSON file
-    method : str, default='replace'
+    service_account_path : str, optional
+        Path to the Google Cloud service account JSON file. If None, use default credentials.
+    method : str, default='append'
         What to do if the table exists. Options: 'fail', 'replace', or 'append'
         
     Returns:
@@ -46,18 +37,32 @@ def load_data_to_bigquery(dataframe, service_account_path='./service_account.jso
     load_dotenv()
     
     # Get BigQuery project, dataset, and table details from environment variables
-    project_id = os.getenv("project_id")
-    dataset_id = os.getenv("dataset_id")
-    table_id = os.getenv("table_id")
+    # Check both lowercase and uppercase versions for compatibility
+    project_id = os.getenv("project_id") 
+    dataset_id = os.getenv("dataset_id") 
+    table_id = os.getenv("table_id") 
+    
+    # Log the configuration values for debugging
+    logger.info(f"BigQuery Configuration - Project: {project_id}, Dataset: {dataset_id}, Table: {table_id}")
     
     if not all([project_id, dataset_id, table_id]):
-        raise ValueError("Missing environment variables. Make sure project_id, dataset_id, and table_id are set.")
+        error_msg = "Missing environment variables. Make sure project_id, dataset_id, and table_id are set."
+        logger.error(error_msg)
+        raise ValueError(error_msg)
     
     # Full table reference
     table_ref = f"{dataset_id}.{table_id}"
     
-    # Set up credentials
-    credentials = service_account.Credentials.from_service_account_file(service_account_path)
+    # Set up credentials - handle both local and cloud environments
+    credentials = None
+    if service_account_path and os.path.exists(service_account_path):
+        # Local environment with service account file
+        logger.info(f"Using service account credentials from: {service_account_path}")
+        credentials = service_account.Credentials.from_service_account_file(service_account_path)
+    else:
+        # Cloud environment - use default credentials
+        logger.info("Service account file not found or not specified. Using default credentials.")
+        # When running in GCP, default credentials will be used automatically
     
     # Check if publishedAt is in datetime format
     if 'publishedAt' in dataframe.columns and dataframe['publishedAt'].dtype == 'object':
@@ -69,7 +74,7 @@ def load_data_to_bigquery(dataframe, service_account_path='./service_account.jso
             destination_table=table_ref,
             project_id=project_id,
             if_exists=method,
-            credentials=credentials
+            credentials=credentials  # Will be None in Cloud Function, which is correct
         )
         logger.info(f"Successfully loaded {len(dataframe)} rows to {table_ref}")
         return len(dataframe)

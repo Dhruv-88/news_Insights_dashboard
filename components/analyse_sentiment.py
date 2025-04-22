@@ -113,3 +113,5 @@ def analyze_sentiment(df: pd.DataFrame, text_column: str = 'full_content') -> pd
     
     logger.info("Sentiment analysis completed successfully")
     return df
+
+

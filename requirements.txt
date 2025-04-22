@@ -1,0 +1,13 @@
+numpy>=2.2.4,<3.0.0
+pandas>=2.2.3,<3.0.0
+newsapi-python>=0.2.7,<0.3.0
+python-dotenv>=1.1.0,<2.0.0
+google-cloud-bigquery>=3.31.0,<4.0.0
+beautifulsoup4>=4.13.3,<5.0.0
+db-dtypes>=1.4.2,<2.0.0
+transformers>=4.51.1,<5.0.0
+torch>=2.6.0,<3.0.0
+pandas-gbq>=0.28.0,<0.29.0
+tqdm>=4.67.1,<5.0.0
+functions-framework>=3.0.0 
+

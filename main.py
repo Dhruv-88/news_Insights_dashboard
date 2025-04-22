@@ -1,31 +1,23 @@
-# Import components
-
 """
-    News Data Pipeline - Main Orchestration Script
-
+    News Data Pipeline - Cloud Function
+    
     This script coordinates the entire ETL pipeline for news data:
     1. Extract data from NewsAPI
     2. Transform and process the data
     3. Analyze sentiment of news content
     4. Load data to BigQuery
-
-    Usage:
-        python main.py
+    
+    Adapted to run as a Google Cloud Function.
 """
 
 import os
 import logging
-import argparse
+import pandas as pd
+from datetime import datetime
 from dotenv import load_dotenv
-import pandas as pd 
-import os
-import argparse
-from dotenv import load_dotenv
-from newsapi import NewsApiClient
-# Set up logging first
+import functions_framework
 
-
-
+# Import components
 try:
     # If main.py is in the root directory
     from components.extract_content import extract_data
@@ -48,40 +40,36 @@ except ImportError:
     from components.load_content import load_data_to_bigquery
     from components.logging_config import setup_logging, get_logger
 
-
-
-
-setup_logging()  # Initialize logging system
+# Setup logging
+setup_logging()
 logger = get_logger(__name__)
 
-# Configure logging
+# Configure logging for cloud environment (avoid file handlers in Cloud Functions)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("news_pipeline.log"),
-        logging.StreamHandler()
-    ]
+    handlers=[logging.StreamHandler()]
 )
-logger = logging.getLogger(__name__)
 
-
-def main():
+@functions_framework.http
+def news_etl_pipeline(request):
     """
-    Execute the complete news data pipeline.
-    """
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description="News Data Pipeline")
-    parser.add_argument('--service_account', type=str, default='./service_account.json',
-                        help='Path to Google Cloud service account JSON file')
-    parser.add_argument('--load_method', type=str, default='append', choices=['fail', 'replace', 'append'],
-                        help='Method to use when loading data to BigQuery')
-    args = parser.parse_args()
+    HTTP Cloud Function entry point.
     
-    # Load environment variables
-    load_dotenv()
+    Args:
+        request (flask.Request): HTTP request object.
+        
+    Returns:
+        Response with execution status
+    """
+    # Log function start
+    logger.info(f"News ETL pipeline triggered at {datetime.now().isoformat()}")
     
     try:
+        # Get configuration from environment variables
+        service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+        load_method = os.environ.get("LOAD_METHOD", "append")
+        
         # Step 1: Extract data from NewsAPI
         logger.info("Step 1: Extracting news data...")
         articles = extract_data()
@@ -101,18 +89,19 @@ def main():
         logger.info("Step 4: Loading data to BigQuery...")
         rows_loaded = load_data_to_bigquery(
             final_df,
-            service_account_path=args.service_account,
-            method=args.load_method
+            service_account_path=service_account_path,
+            method=load_method
         )
         logger.info(f"Successfully loaded {rows_loaded} rows to BigQuery")
         
         # Pipeline complete
         logger.info("News data pipeline completed successfully")
         
+        return {"success": True, "message": f"Pipeline successfully processed {rows_loaded} articles", "timestamp": datetime.now().isoformat()}
+        
     except Exception as e:
-        logger.error(f"Pipeline failed: {str(e)}")
-        raise
-
-
-if __name__ == "__main__":
-    main()
+        error_message = f"Pipeline failed: {str(e)}"
+        logger.error(error_message)
+        
+        # Return error response
+        return {"success": False, "error": error_message, "timestamp": datetime.now().isoformat()}, 500

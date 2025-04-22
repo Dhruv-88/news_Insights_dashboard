@@ -111,3 +111,29 @@ test-clean:
 install-requirements:
 	pip install -r requirements.txt
 
+
+
+
+chmod-deploy-script:
+	chmod +x ./scripts/deployment.sh 
+
+deploy-gcp: chmod-deploy-script
+	./scripts/deployment.sh 
+
+run-pipline-cloud: 
+	gcloud functions call news-etl-pipeline \
+	--gen2 \
+	--region=us-central1 \
+	--project=upheld-quanta-455417-m4
+
+
+# curl -X POST https://us-central1-upheld-quanta-455417-m4.cloudfunctions.net/news_etl_pipeline \
+  -H "Authorization: bearer $(gcloud auth print-identity-token)" 
+
+  gcloud scheduler jobs create http news_etl_scheduler \
+  --schedule="0 */12 * * *" \
+  --uri="https://us-central1-upheld-quanta-455417-m4.cloudfunctions.net/news_etl_pipeline" \
+  --http-method=POST \
+  --oidc-service-account-email="news-service-account@upheld-quanta-455417-m4.iam.gserviceaccount.com" \
+  --oidc-token-audience="https://us-central1-upheld-quanta-455417-m4.cloudfunctions.net/news_etl_pipeline" \
+  --location=us-central1

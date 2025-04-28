@@ -23,21 +23,37 @@ Project Link : https://lookerstudio.google.com/reporting/a2b5dcc8-c710-447f-890d
 
 ## Initial Setup
 
-###Clone the repository:
-bash
+### Clone the repository:
+
+`
 git clone https://github.com/Dhruv-88/news_Insights_dashboard
+`
+<br />
+<br />
+`
 cd news_insights_dashboard
+`
 
 ### Create and activate the conda environment:
-bash
-make create-env
+
+`
+make create-env 
+`
+<br />
+<br />
+`
 conda activate news_env
+`
 
 ### Install dependencies using Poetry:
-bashmake check-poetry
-
+`
+make check-poetry
+`
+<br />
+<br />
+`
 make install-deps-poetry   
-
+`
 - paste the correct value in .env file , variable names should be exact qual to .env_templet.txt
 
 

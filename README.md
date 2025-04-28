@@ -20,6 +20,26 @@ This project involves building a Live Business Intelligence (BI) Dashboard using
 - **Data Storage**: Google BigQuery for storing structured, queried data.
 - **NLP Model**: Pre-trained Sentiment Analysis model integrated directly into the Cloud Function.
 
+## Initial Setup
+
+###Clone the repository:
+bash
+git clone https://github.com/Dhruv-88/news_Insights_dashboard
+cd news_insights_dashboard
+
+### Create and activate the conda environment:
+bash
+make create-env
+conda activate news_env
+
+### Install dependencies using Poetry:
+bashmake check-poetry
+
+make install-deps-poetry   
+
+- paste the correct value in .env file , variable names should be exact qual to .env_templet.txt
+
+
 ## Project Stages
 
 ### 1. Requirement Gathering and Planning

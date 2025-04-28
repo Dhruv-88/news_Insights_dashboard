@@ -3,6 +3,7 @@
 ## Project Overview
 This project involves building a Live Business Intelligence (BI) Dashboard using Looker Studio for visualizing real-time news data fetched via the News API. The project uses Google Cloud Functions for managing the ETL (Extract, Transform, Load) process and schedules data updates every 12 hours. Additionally, sentiment analysis is performed on news articles using a pre-trained NLP model to classify articles as positive, negative, or neutral. The goal is to automate the data flow and create a dynamic, insightful dashboard for news analytics, while storing and querying the data in Google BigQuery.
 
+Project Link : https://lookerstudio.google.com/reporting/a2b5dcc8-c710-447f-890d-68267f51d3e2 
 ### Key Objectives:
 - Build a BI dashboard that highlights key insights from live news data, including sentiment-based metrics.
 - Use News API to extract real-time news data every 12 hours.
